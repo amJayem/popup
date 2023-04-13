@@ -9,7 +9,9 @@ import productCreator from './product-creator.js'
 import GDPRWebhookHandlers from './gdpr.js'
 
 import mongoose from 'mongoose'
-// import mainRoutes from './server/routes/mainRoutes.js'
+import mainRoutes from './server/routes/mainRoutes.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10)
 
@@ -48,27 +50,9 @@ app.get('/api/products/count', async (_req, res) => {
 
 // ===================================================================
 
-const popUpSchema = new mongoose.Schema({
-  title: {
-    type: String
-  },
-  subTitle: { type: String }
-})
+mainRoutes(app)
 
-const PopUpModel = mongoose.model('spu', popUpSchema)
-
-app.post('/api/add', async (req, res) => {
-  const popUpInfo = req.body
-  // console.log(req.body)
-  const newData = new PopUpModel(popUpInfo)
-  // console.log(newData)
-  const result = await newData.save()
-  res.send(result)
-})
-
-// mainRoutes(app)
-
-const dbUrl = process.env.dbUrl
+const dbUrl = process.env.DB_URL
 
 try {
   // @ts-ignore

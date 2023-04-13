@@ -16,13 +16,15 @@ const PopUp = () => {
       title,
       subTitle
     }
-    console.log(popUpInfo)
+    // console.log(popUpInfo)
 
     fetch('/api/add', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(popUpInfo)
     })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
   }
   return (
     <Box>
