@@ -6,11 +6,11 @@ export const PopUpController =
     try {
       const popUpInfo = req.body
       const shop = res.locals.shopify.session.shop
-      // console.log(shop)
+      // console.log(popUpInfo)
       const data = { ...popUpInfo, shop: shop }
       const newData = new SalesPopUpModel(data)
       const result = await newData.save()
-      // console.log(result)
+      console.log(result)
       res.status(200).send({
         result,
         acknowledged: true,

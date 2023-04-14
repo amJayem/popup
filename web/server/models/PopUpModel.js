@@ -8,7 +8,8 @@ const popUpSchema = new mongoose.Schema({
   title: {
     type: String
   },
-  subTitle: { type: String }
+  subTitle: { type: String },
+  product: { type: Array }
 })
 
 const SalesPopUpModel = mongoose.model('spu', popUpSchema)
