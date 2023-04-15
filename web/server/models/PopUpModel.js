@@ -5,10 +5,10 @@ const popUpSchema = new mongoose.Schema({
     type: String,
     require: true
   },
-  title: {
+  textColor: {
     type: String
   },
-  subTitle: { type: String },
+  bgColor: { type: String },
   product: { type: Array }
 })
 

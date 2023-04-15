@@ -9,14 +9,15 @@ import { useAuthenticatedFetch } from '../hooks'
 const PopUp = () => {
   const [select, setSelect] = useState(false)
   const [selectProduct, setSelectProduct] = useState(null)
+  const [tColor, setTColor] = useState('#fff')
+  const [bgColor, setBgColor] = useState('#000')
 
   const fetch = useAuthenticatedFetch()
   const handleSubmit = (e) => {
     e.preventDefault()
     const form = e.target
-    const title = form.title.value
-    const subTitle = form.subTitle.value
-    // console.log(popUpInfo)
+    const textColor = form.textColor.value
+    const bgColor = form.bgColor.value
 
     if (selectProduct) {
       console.log(selectProduct.selection)
@@ -31,10 +32,12 @@ const PopUp = () => {
       }))
 
       const popUpInfo = {
-        title,
-        subTitle,
+        textColor,
+        bgColor,
         product
       }
+
+      console.log(popUpInfo)
 
       fetch('/api/add', {
         method: 'POST',
@@ -47,49 +50,69 @@ const PopUp = () => {
   }
 
   return (
-    <Box>
+    <Box display={'flex'} gap={4} alignItems={'center'}>
       <form onSubmit={handleSubmit}>
-        <Box marginY={2}>
-          <Button variant='contained' onClick={() => setSelect(true)}>
-            Select Product
+        <Box>
+          <Box display={'flex'} gap={2} marginY={1}>
+            <input
+              onChange={(e) => setTColor(e.target.value)}
+              type={'color'}
+              name='textColor'
+            />
+            <Typography fontSize={20} fontWeight={'bold'}>
+              Text Color
+            </Typography>
+          </Box>
+          <Box display={'flex'} gap={2} marginY={1}>
+            <input
+              onChange={(e) => setBgColor(e.target.value)}
+              type={'color'}
+              name='bgColor'
+            />
+            <Typography fontSize={20}>bg Color</Typography>
+          </Box>
+          <Box marginY={2}>
+            <Button variant='outlined' onClick={() => setSelect(true)}>
+              Select Product
+            </Button>
+          </Box>
+          <Button type={'submit'} variant='contained'>
+            Save
           </Button>
+          <ResourcePicker
+            open={select}
+            onCancel={() => setSelect(false)}
+            resourceType={'Product'}
+            selectMultiple={true}
+            showDraft={false}
+            onSelection={(e) => {
+              setSelectProduct(e)
+              setSelect(false)
+            }}
+          />
         </Box>
-        <TextField name='title' label='Title' variant='outlined' />
-        <TextField
-          name='subTitle'
-          label='SubTitle'
-          variant='outlined'
-        /> <br /> <br />
-        <Button type={'submit'} variant='contained'>
-          Save
-        </Button>
-        <ResourcePicker
-          open={select}
-          onCancel={() => setSelect(false)}
-          resourceType={'Product'}
-          selectMultiple={true}
-          showDraft={false}
-          onSelection={(e) => {
-            setSelectProduct(e)
-            setSelect(false)
-          }}
-        />
       </form>
       <br />
       <Box
         display={'flex'}
-        bgcolor={'#0E1B4D'}
+        bgcolor={bgColor}
         alignItems={'center'}
+        justifyContent={'center'}
         gap={4}
-        width={350}
+        paddingX={2}
+        width={'auto'}
         height={115}
-        borderRadius={5}>
+        borderRadius={2}>
         <Box>
           <img width={80} src={'../assets/home-trophy.png'} alt='img' />
         </Box>
-        <Box color={'white'}>
-          <Typography fontWeight={'bold'}>Title</Typography>
-          <Typography fontSize={'15px'}>SubTitle</Typography>
+        <Box>
+          <Typography color={tColor} fontWeight={'bold'}>
+            Empty waterfall
+          </Typography>
+          <Typography color={tColor} fontSize={'15px'}>
+            $5.00
+          </Typography>
         </Box>
       </Box>
     </Box>
