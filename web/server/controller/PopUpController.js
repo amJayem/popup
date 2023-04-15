@@ -16,6 +16,7 @@ export const PopUpController =
           new: true
         }
       )
+      console.log(result)
       res.status(200).send({
         result,
         acknowledged: true,
