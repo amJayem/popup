@@ -8,9 +8,14 @@ export const PopUpController =
       const shop = res.locals.shopify.session.shop
       // console.log(popUpInfo)
       const data = { ...popUpInfo, shop: shop }
-      const newData = new SalesPopUpModel(data)
-      const result = await newData.save()
-      console.log(result)
+      const result = await SalesPopUpModel.findOneAndUpdate(
+        { shop: shop },
+        data,
+        {
+          upsert: true,
+          new: true
+        }
+      )
       res.status(200).send({
         result,
         acknowledged: true,
