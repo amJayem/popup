@@ -5,7 +5,7 @@ import PopUp from '../popup/PopUp'
 
 export default function HomePage() {
   return (
-    <Page narrowWidth>
+    <Page>
       <TitleBar title='Sales Popup App' primaryAction={null} />
       <Box>
         <PopUp />
