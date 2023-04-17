@@ -52,6 +52,39 @@ app.get('/api/products/count', async (_req, res) => {
 
 mainRoutes(app)
 
+app.put('/api/theme-files', async (req, res) => {
+  const id = req.query.id
+  console.log(id)
+  const session = res.locals.shopify.session
+  const data = await shopify.api.rest.Asset.all({
+    session: session,
+    theme_id: id,
+    asset: { key: 'layout/theme.liquid' }
+  })
+  const newValue = data[0]?.value
+    ?.split(`</body>`)
+    .join(
+      `<div id='jayem'></div> \n <script src='https://sales-pop.vercel.app/api/cdn/js'></script> \n </body>`
+    )
+  if (!data[0]?.value?.includes(`<div id='jayem'></div>`)) {
+    const asset = new shopify.api.rest.Asset({ session: session })
+    asset.theme_id = id
+    asset.key = 'layout/theme.liquid'
+    asset.value = newValue
+    await asset.save({
+      update: true
+    })
+    res.json({
+      message: 'success'
+    })
+  } else {
+    res.json({
+      message: 'Failed',
+      warning: 'already exist'
+    })
+  }
+})
+
 const dbUrl = process.env.DB_URL
 
 try {

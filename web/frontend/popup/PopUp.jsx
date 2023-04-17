@@ -3,6 +3,9 @@ import {
   Box,
   Button,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography
@@ -12,7 +15,7 @@ import { ResourcePicker } from '@shopify/app-bridge-react'
 import Snackbar from '@mui/material/Snackbar'
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useState } from 'react'
-import { useAuthenticatedFetch } from '../hooks'
+import { useAppQuery, useAuthenticatedFetch } from '../hooks'
 // import fetch from '../hooks/useAuthenticatedFetch'
 
 const PopUp = () => {
@@ -20,7 +23,7 @@ const PopUp = () => {
   const [selectProduct, setSelectProduct] = useState(null)
   const [tColor, setTColor] = useState('#ffffff')
   const [bgColor, setBgColor] = useState('#4234b2')
-
+  const [theme, setTheme] = useState('')
   const [open, setOpen] = React.useState(false)
 
   const handleOpen = () => {
@@ -31,16 +34,36 @@ const PopUp = () => {
     if (reason === 'clickaway') {
       return
     }
-
     setOpen(false)
   }
 
+  const handleChange = (event) => {
+    console.log(event.target.value)
+  }
+
+  console.log(theme.id)
+
   const fetch = useAuthenticatedFetch()
+  const { data, isLoading } = useAppQuery({ url: '/api/theme' })
+
+  // console.log(data?.result?.data[1])
+  // fetch('/api/theme', {
+  //   method: 'get'
+  // })
+  //   .then((res) => res.json())
+  //   .then((data) => {
+  //     // if (data.status === 200) {
+  //     // }
+  //     console.log(data)
+  //   })
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const form = e.target
     const textColor = form.textColor.value
     const bgColor = form.bgColor.value
+    const theme = form.theme.value
+    console.log(theme)
 
     if (selectProduct) {
       console.log(selectProduct.selection)
@@ -72,7 +95,6 @@ const PopUp = () => {
           if (data.status === 200) {
             handleOpen()
           }
-
           console.log(data)
         })
     }
@@ -153,6 +175,28 @@ const PopUp = () => {
                 name='bgColor'
                 defaultValue={bgColor}
               />
+            </Box>
+            {/* theme selector */}
+            <Box>
+              <InputLabel id='demo-simple-select-label'>
+                Select a Theme
+              </InputLabel>
+              <Select
+                name='theme'
+                fullWidth
+                value={theme} //{data?.result?.data[0].name}
+                // defaultValue={'Select'}
+                label='Select a theme'
+                onChange={(e) => setTheme(e.target.value)}>
+                {data?.result?.data?.map((theme, i) => (
+                  <MenuItem key={i} value={theme}>
+                    {theme.name}
+                  </MenuItem>
+                ))}
+                {/* <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem> */}
+              </Select>
             </Box>
             <Box marginY={2}>
               <Button
