@@ -53,34 +53,47 @@ app.get('/api/products/count', async (_req, res) => {
 mainRoutes(app)
 
 app.put('/api/theme-files', async (req, res) => {
-  const id = req.query.id
-  console.log(id)
-  const session = res.locals.shopify.session
-  const data = await shopify.api.rest.Asset.all({
-    session: session,
-    theme_id: id,
-    asset: { key: 'layout/theme.liquid' }
-  })
-  const newValue = data[0]?.value
-    ?.split(`</body>`)
-    .join(
-      `<div id='jayem'></div> \n <script src='https://sales-pop.vercel.app/api/cdn/js'></script> \n </body>`
-    )
-  if (!data[0]?.value?.includes(`<div id='jayem'></div>`)) {
-    const asset = new shopify.api.rest.Asset({ session: session })
-    asset.theme_id = id
-    asset.key = 'layout/theme.liquid'
-    asset.value = newValue
-    await asset.save({
-      update: true
+  try {
+    const session = res.locals.shopify.session
+    const id = req.body.id
+    let isExist = false
+    const body = await shopify.api.rest.Asset.all({
+      session: session,
+      theme_id: id,
+      asset: { key: 'layout/theme.liquid' }
     })
-    res.json({
-      message: 'success'
+    const htmlFile = body[0].value
+    console.log(body)
+    if (htmlFile.includes('jayem')) {
+      isExist = true
+    } else {
+      isExist = false
+      let result = htmlFile.split('</body>')
+      result = result.join(`
+        <!--   Sales popup Code Start -->
+           <script src="https://salespopup-server.vercel.app/api/cdn/js"></script>
+        <!--   Sales popup Code End -->
+        </body>
+        `)
+
+      const asset = new shopify.api.rest.Asset({ session: session })
+      asset.theme_id = id
+      asset.key = 'layout/theme.liquid'
+      asset.value = result
+      await asset.save({
+        update: true
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'ok',
+      isExist
     })
-  } else {
-    res.json({
-      message: 'Failed',
-      warning: 'already exist'
+  } catch (error) {
+    res.status(500).json({
+      message: 'There was an error',
+      error: error.message
     })
   }
 })

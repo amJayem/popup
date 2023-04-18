@@ -11,12 +11,6 @@ export const ThemeController =
 
       console.log({ result })
       res.status(200).json({ success: true, result })
-      // res.status(200).json({
-      //   result,
-      //   acknowledged: true,
-      //   status: 200,
-      //   message: 'ok'
-      // })
     } catch (error) {
       res.json({ message: error.message })
     }
